@@ -1,27 +1,56 @@
 package main
 
+// Here we are building a simple calculator
+// according to the corresponding book
 import (
 	"fmt"
+	"strconv"
 )
 
-func f1(a string) int {
-	return len(a)
-}
+func add(i, j int) int { return i + j }
+func sub(i, j int) int { return i - j }
+func mul(i, j int) int { return i * j }
+func div(i, j int) int { return i / j }
 
-func f2(a string) int {
-	total := 0
-	for _, v := range a {
-		total += int(v)
-	}
-	return total
+var opMap = map[string]func(int, int) int{
+	"+": add,
+	"-": sub,
+	"*": mul,
+	"/": div,
 }
 
 func main() {
-	var myFuncVariable func(string) int
-	myFuncVariable = f1
-	result := myFuncVariable("Hello")
-	fmt.Println(result)
-	myFuncVariable = f2
-	result = myFuncVariable("Hello")
-	fmt.Println(result)
+	expressions := [][]string{
+		{"5", "+", "2"},
+		{"5", "-", "2"},
+		{"5", "*", "2"},
+		{"5", "/", "2"},
+		{"5", "%", "2"},
+		{"five", "+", "two"},
+		{"5"},
+	}
+	for _, expression := range expressions {
+		if len(expression) != 3 {
+			fmt.Println("Invalid expression:", expression)
+			continue
+		}
+		p1, err := strconv.Atoi(expression[0])
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		op := expression[1]
+		opFunk, ok := opMap[op]
+		if !ok {
+			fmt.Println("Unsupported operator:", op)
+			continue
+		}
+		p2, err := strconv.Atoi(expression[2])
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		result := opFunk(p1, p2)
+		fmt.Println(result)
+	}
 }
